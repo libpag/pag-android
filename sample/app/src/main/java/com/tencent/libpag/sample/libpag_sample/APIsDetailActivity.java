@@ -238,7 +238,16 @@ public class APIsDetailActivity extends AppCompatActivity {
     private void prepareEncoder() {
         pagFile = PAGFile.Load(getAssets(), "replacement.pag");
         mBufferInfo = new MediaCodec.BufferInfo();
-        MediaFormat format = MediaFormat.createVideoFormat(MIME_TYPE, pagFile.width(), pagFile.height());
+        int width = pagFile.width();
+        int height = pagFile.height();
+        if (width % 2 == 1) {
+            width --;
+        }
+        if (height % 2 == 1) {
+            height --;
+        }
+
+        MediaFormat format = MediaFormat.createVideoFormat(MIME_TYPE, width, height);
         format.setInteger(MediaFormat.KEY_COLOR_FORMAT,
                 MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
         format.setInteger(MediaFormat.KEY_BIT_RATE, mBitRate);
@@ -261,7 +270,7 @@ public class APIsDetailActivity extends AppCompatActivity {
 
         mEncoder.start();
         String outputPath = new File(OUTPUT_DIR,
-                "test." + pagFile.width() + "x" + pagFile.height() + ".mp4").toString();
+                "test." + width + "x" + height + ".mp4").toString();
         Log.d(TAG, "video output file is " + outputPath);
         try {
             mMuxer = new MediaMuxer(outputPath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
