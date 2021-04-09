@@ -9,11 +9,6 @@ import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
 import android.media.MediaMuxer;
-import android.opengl.EGL14;
-import android.opengl.EGLConfig;
-import android.opengl.EGLContext;
-import android.opengl.EGLDisplay;
-import android.opengl.EGLSurface;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -41,9 +36,6 @@ import java.nio.ByteBuffer;
 public class APIsDetailActivity extends AppCompatActivity {
 
     private static final String TAG = "APIsDetailActivity";
-    private EGLDisplay eglDisplay;
-    private EGLSurface eglSurface;
-    private EGLContext eglContext;
     private PAGFile pagFile;
     private Button exportButton;
 
@@ -63,44 +55,6 @@ public class APIsDetailActivity extends AppCompatActivity {
 
     private static final File OUTPUT_DIR = Environment.getExternalStorageDirectory();
 
-    private synchronized void eglSetup() {
-        eglDisplay = EGL14.eglGetDisplay(EGL14.EGL_DEFAULT_DISPLAY);
-        int[] version = new int[2];
-        EGL14.eglInitialize(eglDisplay, version, 0, version, 1);
-        EGL14.eglBindAPI(EGL14.EGL_OPENGL_ES_API);
-        int[] attributeList = {
-                EGL14.EGL_RENDERABLE_TYPE, EGL14.EGL_OPENGL_ES2_BIT,
-                EGL14.EGL_RED_SIZE, 8,
-                EGL14.EGL_GREEN_SIZE, 8,
-                EGL14.EGL_BLUE_SIZE, 8,
-                EGL14.EGL_ALPHA_SIZE, 8,
-                EGL14.EGL_STENCIL_SIZE, 8,
-                EGL14.EGL_SAMPLE_BUFFERS, 1,
-                EGL14.EGL_SAMPLES, 4,
-                EGL14.EGL_NONE
-        };
-        EGLConfig[] configs = new EGLConfig[1];
-        int[] numConfigs = new int[1];
-        EGL14.eglChooseConfig(eglDisplay, attributeList, 0, configs, 0,
-                configs.length, numConfigs, 0);
-
-        int[] attribute_list = {
-                EGL14.EGL_CONTEXT_CLIENT_VERSION, 2,
-                EGL14.EGL_NONE
-        };
-
-        eglContext = EGL14.eglCreateContext(eglDisplay, configs[0], EGL14.EGL_NO_CONTEXT,
-                attribute_list, 0);
-
-        int[] surfaceAttributes = {
-                EGL14.EGL_WIDTH, 1,
-                EGL14.EGL_HEIGHT, 1,
-                EGL14.EGL_NONE
-        };
-        eglSurface = EGL14.eglCreatePbufferSurface(eglDisplay, configs[0], surfaceAttributes, 0);
-        EGL14.eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,7 +66,7 @@ public class APIsDetailActivity extends AppCompatActivity {
 
     private void initPAGView() {
         RelativeLayout backgroundView = findViewById(R.id.background_view);
-        final PAGView pagView = new PAGView(this, eglContext);
+        final PAGView pagView = new PAGView(this);
         pagView.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         backgroundView.addView(pagView);
         Intent intent = getIntent();
@@ -177,8 +131,6 @@ public class APIsDetailActivity extends AppCompatActivity {
     }
 
     private PAGImage createPAGImage() {
-        eglSetup();
-
         AssetManager assetManager = getAssets();
         InputStream stream = null;
         try {
