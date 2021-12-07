@@ -33,7 +33,8 @@ public class MainActivity extends AppCompatActivity implements SimpleListAdapter
             "基础使用",
             "替换文字",
             "替换图片",
-            "多个PAGFile在同一个Surface中使用"
+            "多个PAGFile在同一个Surface中使用",
+            "纹理ID创建PAGSurface"
     };
 
     @Override
@@ -54,11 +55,30 @@ public class MainActivity extends AppCompatActivity implements SimpleListAdapter
 
     @Override
     public void onItemClick(int position) {
-        goToAPIsDetail(position);
+        switch (position) {
+            case 0:
+            case 1:
+            case 2:
+            case 3:
+                goToAPIsDetail(position);
+                break;
+            case 4:
+                goToTestDetail(position);
+                break;
+
+            default:
+                break;
+        }
     }
 
     private void goToAPIsDetail(int position) {
         Intent intent = new Intent(MainActivity.this, APIsDetailActivity.class);
+        intent.putExtra("API_TYPE", position);
+        startActivity(intent);
+    }
+
+    private void goToTestDetail(int position) {
+        Intent intent = new Intent(MainActivity.this, TextureDemoActivity.class);
         intent.putExtra("API_TYPE", position);
         startActivity(intent);
     }
