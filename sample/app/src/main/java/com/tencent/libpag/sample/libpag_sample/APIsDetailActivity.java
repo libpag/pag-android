@@ -1,6 +1,8 @@
 package com.tencent.libpag.sample.libpag_sample;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,6 +12,7 @@ import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
 import android.media.MediaMuxer;
 import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -55,6 +58,11 @@ public class APIsDetailActivity extends AppCompatActivity {
 
     private static final File OUTPUT_DIR = Environment.getExternalStorageDirectory();
 
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            "android.permission.READ_EXTERNAL_STORAGE",
+            "android.permission.WRITE_EXTERNAL_STORAGE" };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,20 +87,20 @@ public class APIsDetailActivity extends AppCompatActivity {
             // Basic usage
             case 0:
                 pagFile1 = PAGFile.Load(getAssets(), "replacement.pag");
-                pagView.setFile(pagFile1);
+                pagView.setComposition(pagFile1);
                 exportButton.setVisibility(View.VISIBLE);
                 break;
             // Replace text in pag file
             case 1:
                 pagFile1 = PAGFile.Load(getAssets(), "test2.pag");
                 testEditText(pagFile1, pagView);
-                pagView.setFile(pagFile1);
+                pagView.setComposition(pagFile1);
                 break;
             // Replace image in pag file
             case 2:
                 pagFile1 = PAGFile.Load(getAssets(), "replacement.pag");
                 testReplaceImage(pagFile1, pagView);
-                pagView.setFile(pagFile1);
+                pagView.setComposition(pagFile1);
                 break;
             // Use multiple PAGFiles in the same Surface
             case 3:
@@ -151,7 +159,7 @@ public class APIsDetailActivity extends AppCompatActivity {
      */
     void testReplaceImage(PAGFile pagFile, PAGView pagView) {
         if (pagFile == null || pagView == null || pagFile.numImages() <= 0) return;
-        pagView.replaceImage(0, createPAGImage());
+        pagFile.replaceImage(0, createPAGImage());
     }
 
     /**
@@ -161,11 +169,25 @@ public class APIsDetailActivity extends AppCompatActivity {
         if (pagFile == null || pagView == null || pagFile.numTexts() <= 0) return;
         PAGText textData = pagFile.getTextData(0);
         textData.text = "replacement test";
-        pagView.setTextData(0, textData);
+        pagFile.replaceText(0, textData);
     }
 
+    private static void verifyStoragePermissions(Activity activity) {
+        try {
+            //检测是否有写的权限
+            int permission = ActivityCompat.checkSelfPermission(activity,
+                    "android.permission.WRITE_EXTERNAL_STORAGE");
+            if (permission != PackageManager.PERMISSION_GRANTED) {
+                // 没有写的权限，去申请写的权限，会弹出对话框
+                ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE,REQUEST_EXTERNAL_STORAGE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public void export(View view) {
+        verifyStoragePermissions(this);
         pagExportToMP4();
     }
 
