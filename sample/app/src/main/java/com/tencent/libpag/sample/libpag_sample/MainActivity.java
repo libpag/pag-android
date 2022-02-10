@@ -30,11 +30,11 @@ import java.io.InputStream;
 public class MainActivity extends AppCompatActivity implements SimpleListAdapter.ItemClickListener {
 
     private static final String[] items = new String[]{
-            "基础使用",
-            "替换文字",
-            "替换图片",
-            "多个PAGFile在同一个Surface中使用",
-            "纹理ID创建PAGSurface"
+            "A Simple PAG Animation",
+            "Text Replacement",
+            "Image Replacement",
+            "Render Multiple PAG Files on A PAGSurface",
+            "Create PAGSurface through texture ID"
     };
 
     @Override
