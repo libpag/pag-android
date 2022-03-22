@@ -134,7 +134,7 @@ public class APIsDetailActivity extends AppCompatActivity {
                 break;
         }
 
-        pagView.setRepeatCount(-1);
+        pagView.setRepeatCount(0);
         pagView.play();
     }
 
