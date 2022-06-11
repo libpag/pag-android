@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
@@ -23,6 +24,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
+import org.libpag.PAG;
 import org.libpag.PAGComposition;
 import org.libpag.PAGFile;
 import org.libpag.PAGImage;
@@ -110,24 +112,20 @@ public class APIsDetailActivity extends AppCompatActivity {
                 int width = outMetrics.widthPixels;
                 int height = outMetrics.heightPixels;
                 pagComposition = PAGComposition.Make(width, height);
-                pagFile1 = PAGFile.Load(getAssets(), "data-TimeStretch.pag");
-                pagFile1.replaceImage(0, PAGImage.FromAssets(getAssets(), "test.png"));
-                Matrix matrix = new Matrix();
-                matrix.setTranslate(200, 200);
-                matrix.preScale(0.3f, 0.3f);
-                pagFile1.setMatrix(matrix);
-                pagFile1.setDuration(7000000);
-                pagFile1.setStartTime(3000000);
-                pagComposition.addLayer(pagFile1);
-
-                PAGFile file = PAGFile.Load(getAssets(), "data_video.pag");
-                file.setDuration(10000000);
-                Matrix matrix1 = new Matrix();
-                matrix1.setTranslate((width - file.width()) / 2.0f , (height - file.height()) / 2.0f);
-                matrix1.setScale(width * 1.0f / file.width(), height * 1.0f / file.height());
-                file.setMatrix(matrix1);
-
-                pagComposition.addLayerAt(file, 0);
+                float itemWidth = width / 5;
+                float itemHeight = 300;
+                for (int i = 0; i < 20; i++) {
+                    pagComposition.addLayer(getPagFile(i / 5,  i % 5, i + ".pag", itemWidth, itemHeight));
+                }
+                pagView.setComposition(pagComposition);
+                break;
+            case 5:
+                PAGFile pagFile = PAGFile.Load(getAssets(), "test2.pag");
+                pagComposition = PAGComposition.Make(pagFile.width(), pagFile.height());
+                // 播放1~3s
+                pagFile.setStartTime(-1000000);
+                pagFile.setDuration(3000000);
+                pagComposition.addLayer(pagFile);
                 pagView.setComposition(pagComposition);
                 break;
             default:
@@ -184,6 +182,17 @@ public class APIsDetailActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private PAGFile getPagFile(int row, int colume, String name, float itemWidth, float itemHeight) {
+        PAGFile pagFile = PAGFile.Load(getAssets(), name);
+        Matrix matrix = new Matrix();
+        float scaleX = itemWidth * 1.0f / pagFile.width();
+        matrix.preScale(scaleX, scaleX);
+        matrix.postTranslate(itemWidth * colume, row * itemHeight);
+        pagFile.setMatrix(matrix);
+        pagFile.setDuration(10000000);
+        return pagFile;
     }
 
     public void export(View view) {

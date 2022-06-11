@@ -33,8 +33,9 @@ public class MainActivity extends AppCompatActivity implements SimpleListAdapter
             "A Simple PAG Animation",
             "Text Replacement",
             "Image Replacement",
-            "Render Multiple PAG Files on A PAGSurface",
-            "Create PAGSurface through texture ID"
+            "Render Multiple PAG Files on A PAGView",
+            "Create PAGSurface through texture ID",
+            "Render an interval of the pag file"
     };
 
     @Override
@@ -60,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements SimpleListAdapter
             case 1:
             case 2:
             case 3:
+            case 5:
                 goToAPIsDetail(position);
                 break;
             case 4:
