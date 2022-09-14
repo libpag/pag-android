@@ -29,6 +29,7 @@ import org.libpag.PAGImage;
 import org.libpag.PAGPlayer;
 import org.libpag.PAGSurface;
 import org.libpag.PAGText;
+import org.libpag.PAGTimeStretchMode;
 import org.libpag.PAGView;
 
 import java.io.File;
@@ -121,6 +122,7 @@ public class APIsDetailActivity extends AppCompatActivity {
                 PAGFile pagFile = PAGFile.Load(getAssets(), "test2.pag");
                 pagComposition = PAGComposition.Make(pagFile.width(), pagFile.height());
                 // 播放1~3s
+                pagFile.setTimeStretchMode(PAGTimeStretchMode.None);
                 pagFile.setStartTime(-1000000);
                 pagFile.setDuration(3000000);
                 pagComposition.addLayer(pagFile);
