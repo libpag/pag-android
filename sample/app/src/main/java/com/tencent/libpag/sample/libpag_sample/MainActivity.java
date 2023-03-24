@@ -1,31 +1,13 @@
 package com.tencent.libpag.sample.libpag_sample;
 
 import android.content.Intent;
-import android.content.res.AssetManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.opengl.EGL14;
-import android.opengl.EGLConfig;
-import android.opengl.EGLContext;
-import android.opengl.EGLDisplay;
-import android.opengl.EGLSurface;
-import android.opengl.GLES20;
-import android.opengl.GLUtils;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.ViewGroup;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.WindowManager;
-import android.widget.RelativeLayout;
-
-import org.libpag.PAGFile;
-import org.libpag.PAGImage;
-import org.libpag.PAGText;
-import org.libpag.PAGView;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 public class MainActivity extends AppCompatActivity implements SimpleListAdapter.ItemClickListener {
 
@@ -35,7 +17,9 @@ public class MainActivity extends AppCompatActivity implements SimpleListAdapter
             "Image Replacement",
             "Render Multiple PAG Files on A PAGView",
             "Create PAGSurface through texture ID",
-            "Render an interval of the pag file"
+            "Render an interval of the pag file",
+            "Render Multiple PAGImageView",
+            "Render PAGImageView in list",
     };
 
     @Override
@@ -67,7 +51,12 @@ public class MainActivity extends AppCompatActivity implements SimpleListAdapter
             case 4:
                 goToTestDetail(position);
                 break;
-
+            case 6:
+                startActivity(new Intent(MainActivity.this, MultiplePAGImageViewActivity.class));
+                break;
+            case 7:
+                startActivity(new Intent(MainActivity.this, PAGImageViewListActivity.class));
+                break;
             default:
                 break;
         }
