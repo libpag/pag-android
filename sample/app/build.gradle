@@ -35,6 +35,7 @@ android {
         sourceCompatibility 1.8
         targetCompatibility 1.8
     }
+    namespace 'com.tencent.libpag.sample.libpag_sample'
 }
 
 dependencies {
