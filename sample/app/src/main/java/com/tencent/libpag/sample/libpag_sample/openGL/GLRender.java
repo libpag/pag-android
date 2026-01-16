@@ -2,6 +2,7 @@ package com.tencent.libpag.sample.libpag_sample.openGL;
 
 import android.content.Context;
 import android.opengl.GLES20;
+import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
 import android.util.Log;
 
@@ -120,8 +121,21 @@ public class GLRender implements GLSurfaceView.Renderer {
 
         initShader();
         Log.d(TAG,"draw texture id is " + textureId );
+
+        // Reset GL state that PAG may have modified
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+        // Unbind VAO that tgfx may have bound
+        GLES30.glBindVertexArray(0);
         GLES20.glUseProgram(mProgram);
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER,0);
+        GLES20.glDisable(GLES20.GL_BLEND);
+        GLES20.glDisable(GLES20.GL_SCISSOR_TEST);
+        GLES20.glDisable(GLES20.GL_STENCIL_TEST);
+        GLES20.glColorMask(true, true, true, true);
+
+        // Set texture sampler uniform
+        int sTextureLocation = GLES20.glGetUniformLocation(mProgram, "sTexture");
+        GLES20.glUniform1i(sTextureLocation, 0);
+
         int vPositionLocation = GLES20.glGetAttribLocation(mProgram, "vPosition");
         GLES20.glEnableVertexAttribArray(vPositionLocation);
         GLES20.glVertexAttribPointer(vPositionLocation, 2, GLES20.GL_FLOAT, false, 4 * 2, VERTEX_BUF);
@@ -130,7 +144,7 @@ public class GLRender implements GLSurfaceView.Renderer {
         GLES20.glVertexAttribPointer(vTexCoordLocation, 2, GLES20.GL_FLOAT, false, 4 * 2, TEXTURE_COORD_BUF);
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureId);
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
     }
 
@@ -152,4 +166,3 @@ public class GLRender implements GLSurfaceView.Renderer {
     }
 
 }
-
